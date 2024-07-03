@@ -1,0 +1,4 @@
+host: "localhost"
+port: 16123
+server_name: "unknown-server"
+retry_interval: 3000
