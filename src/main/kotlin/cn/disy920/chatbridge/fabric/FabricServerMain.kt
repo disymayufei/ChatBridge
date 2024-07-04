@@ -5,6 +5,7 @@ import cn.disy920.chatbridge.fabric.config.ModConfigLoader
 import cn.disy920.chatbridge.listener.Listeners
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
+import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.minecraft.server.MinecraftServer
 import java.net.URI
@@ -44,6 +45,10 @@ class FabricServerMain : DedicatedServerModInitializer {
 
         ServerPlayConnectionEvents.DISCONNECT.register { handler,  _ ->
             Listeners.onPlayerQuit(handler.player.name.string)
+        }
+
+        ServerMessageEvents.CHAT_MESSAGE.register { message, player, _ ->
+            Listeners.onChat(player.name.string, message.signedBody.content)
         }
     }
 }

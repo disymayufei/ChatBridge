@@ -14,8 +14,8 @@ class WebsocketHandler(
     }
 
     fun sendPacket(packet: C2SPacket) {
-        if (!websocketConnection.living) throw ConnectionLostException("与服务器的连接已断开")
-        websocketConnection.send(packet.encodeToJson())
+        if (!websocketConnection.living) throw ConnectionLostException("与服务器的连接已被中止")
+        if (websocketConnection.isOpen) websocketConnection.send(packet.encodeToJson())
     }
 
     fun disconnect() {

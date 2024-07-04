@@ -15,6 +15,11 @@ class WebsocketConnection(
     private val retryInterval: Long
 ) : WebSocketClient(address, Draft_6455(), null, 2000) {
 
+    /**
+     * 表示连接是否被主动中止，值为false则表示已经被主动中止
+     * 被主动中止的连接不应该再被使用或服用，如果仍有需要，必须重建连接
+     * 该值不代表连接已成功建立，若要判断连接是否成功建立，请使用isOpen方法
+     */
     var living = false
 
     private var reconnecting = false
