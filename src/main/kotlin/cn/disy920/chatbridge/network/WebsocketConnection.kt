@@ -21,7 +21,7 @@ class WebsocketConnection(
     private var lastConnectTime = 0L
     private var heartbeatThread: Thread? = null
 
-    private val pingJson = PingC2SPacket.INSTANCE.encodeToJson()
+    private val pingJson = PingC2SPacket.encodeToJson()
 
     private val heartbeatTask = Runnable {
         while (isOpen && !Thread.currentThread().isInterrupted) {

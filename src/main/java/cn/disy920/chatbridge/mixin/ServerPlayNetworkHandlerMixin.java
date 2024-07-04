@@ -26,6 +26,6 @@ public class ServerPlayNetworkHandlerMixin {
         String chatMessage = packet.chatMessage();
         if (chatMessage.startsWith("/")) return;
 
-        Listeners.Companion.onChat(this.player.getName().getString(), chatMessage);
+        Listeners.INSTANCE.onChat(this.player.getName().getString(), chatMessage);
     }
 }
