@@ -2,13 +2,19 @@
 适用于Minecraft Bukkit/Fabric端的一个兼容SLS-Bot的跨服聊天Mod，通过Websocket与SLS-Bot主插件通讯，以Apache 2.0协议开源
 
 # 配置文件
-以下以Fabric端的配置文件为例，Bukkit端配置文件格式为Yaml，基本内容与Fabric端保持一致
+不论是Bukkit还是Fabric端，配置文件格式均为JSON。由于原生JSON不支持注释，所以当您复制下方内容作为您的配置文件时，可能需要手动去掉注释内容。
 ```json5
 {
   "host": "127.0.0.1",  // SLS-Bot监听的地址，可在SLS-Bot的配置文件中设置
   "port": 16123,  // SLS-Bot监听的端口，可在SLS-Bot的配置文件中设置
-  "serverName": "unknown-server"  // 服务器名，会显示给其他服务器
-  "retryInterval": 3000  // 与服务器重连尝试的间隔时间，单位为毫秒（ms）
+  "serverName": "unknown-server",  // 服务器名，会显示给其他服务器
+  "retryInterval": 3000,  // 与服务器重连尝试的间隔时间，单位为毫秒（ms）
+  messageConfig: {
+    transferChat: true,  // 是否传递聊天信息
+    transferMCDRCommand: false,  // 是否传递可能的MCDR命令（以!!开头的消息）
+    transferPlayerChange: true,  // 是否传递玩家变动信息（玩家加入/退出）
+    transferServerLifecycle: true  // 是否传递服务器生命变动事件（开/关服）
+  }
 }
 ```
 
