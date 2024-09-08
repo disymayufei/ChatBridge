@@ -1,6 +1,6 @@
 package cn.disy920.chatbridge.network
 
-import cn.disy920.chatbridge.Main
+import cn.disy920.chatbridge.Main.Companion.main
 import cn.disy920.chatbridge.network.packets.Packet
 import cn.disy920.chatbridge.network.packets.c2s.PingC2SPacket
 import com.google.gson.JsonObject
@@ -8,6 +8,7 @@ import com.google.gson.JsonSyntaxException
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
+import java.net.ConnectException
 import java.net.URI
 
 class WebsocketConnection(
@@ -50,7 +51,7 @@ class WebsocketConnection(
         reconnecting = false
 
         val socketAddress = this.remoteSocketAddress
-        Main.logger.info(String.format("成功连接至跨服聊天服务器：ws://%s:%s", socketAddress.hostString, socketAddress.port))
+        main.logger.info(String.format("成功连接至跨服聊天服务器：ws://%s:%s", socketAddress.hostString, socketAddress.port))
     }
 
     override fun onMessage(message: String) {
@@ -60,7 +61,7 @@ class WebsocketConnection(
             receiveObj = Packet.GSON.fromJson(message, JsonObject::class.java)
         }
         catch (e: JsonSyntaxException) {
-            Main.logger.error("解析服务端包时发现异常的JSON格式: ", e)
+            main.logger.error("解析服务端包时发现异常的JSON格式: ", e)
             return
         }
 
@@ -76,13 +77,12 @@ class WebsocketConnection(
 
                     val chatText = String.format("<%s§r | %s§r> %s", identity, sender, text)
 
-                    Main.logger.info(chatText)
-                    Main.serverHandler?.broadcast(chatText)
+                    main.serverHandler.broadcast(chatText)
                 }
             }
         }
         catch (e: Exception) {
-            Main.logger.error("解析${header}包时发生异常: ", e)
+            main.logger.error("解析${header}包时发生异常: ", e)
             e.printStackTrace()
         }
 
@@ -93,7 +93,13 @@ class WebsocketConnection(
     }
 
     override fun onError(ex: Exception) {
-        Main.logger.error("与跨服聊天的服务器连接发生错误: ", ex)
+        if (ex is ConnectException) {
+            // 这就是单纯的与服务器断开连接，实际上应该忽略掉，等待自动重连就行，避免log刷屏
+            main.logger.info("与跨服聊天的服务器连接断开，正在尝试自动重连...")
+            return
+        }
+
+        main.logger.error("与跨服聊天的服务器连接发生错误: ", ex)
     }
 
     override fun connect() {

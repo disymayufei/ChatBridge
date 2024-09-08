@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version '2.0.0'
     id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '8.3.0'
 }
 
 version = project.mod_version
@@ -29,7 +29,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.kotlin_version}"
 
     // Network
-    include(modImplementation('org.java-websocket:Java-WebSocket:1.5.6'))
+    shadow "org.java-websocket:Java-WebSocket:1.5.6"
 
     // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
@@ -80,21 +80,17 @@ jar {
     }
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
+shadowJar {
+    configurations = [project.configurations.shadow]
 
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
-    }
+    exclude "kotlin/**", "kotlinx/**", "META-INF"
+    exclude "org/slf4j/**"
+    relocate "org.java_websocket", "cn.disy920.websocket"
+}
+
+remapJar {
+    dependsOn(shadowJar)
+    inputFile = shadowJar.archiveFile
 }
 
 kotlin {

@@ -2,26 +2,33 @@ package cn.disy920.chatbridge.bukkit
 
 import cn.disy920.chatbridge.Main
 import cn.disy920.chatbridge.bukkit.listener.PlayerListener
+import cn.disy920.chatbridge.config.ConfigLoader
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.net.URI
 
 class BukkitServerMain : JavaPlugin() {
-    override fun onEnable() {
-        saveDefaultConfig()
+    private lateinit var pluginInstance: Main
 
-        val serverName = config.getString("server_name", "unknown-server")!!
-        val host = config.getString("host", "localhost")!!
-        val port = config.getInt("port", 16123)
-        val connectionRetryInterval = config.getLong("retry_interval", 3000L)
-        Main.serverHandler = BukkitServerHandler(serverName, URI("ws://$host:$port"), connectionRetryInterval)
+    override fun onEnable() {
+        val configLoader = ConfigLoader(this.dataFolder)
+        val config = configLoader.loadConfig()
+
+        pluginInstance = Main(
+            configLoader,
+            BukkitServerHandler(
+                config.serverName,
+                URI("ws://${config.host}:${config.port}"),
+                config.retryInterval
+            )
+        )
+
+        pluginInstance.onEnable()
 
         Bukkit.getPluginManager().registerEvents(PlayerListener(), this)
-
-        Main.onEnable()
     }
 
     override fun onDisable() {
-        Main.onDisable()
+        pluginInstance.onDisable()
     }
 }
