@@ -1,0 +1,38 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.0.0'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '2.0.0'
+}
+
+apply plugin: 'com.gradleup.shadow'
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand 'version': project.version
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "spigotmc-repo"
+        url = "https://maven.fastmirror.net/repositories/minecraft/"
+    }
+}
+
+dependencies {
+    compileOnly "org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT"
+}
+
+def targetJavaVersion = 8
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release.set(targetJavaVersion)
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+}
+
+kotlin {
+    jvmToolchain(targetJavaVersion)
+}

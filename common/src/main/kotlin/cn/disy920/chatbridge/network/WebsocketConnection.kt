@@ -3,11 +3,16 @@ package cn.disy920.chatbridge.network
 import cn.disy920.chatbridge.Main.Companion.main
 import cn.disy920.chatbridge.network.packets.Packet
 import cn.disy920.chatbridge.network.packets.c2s.PingC2SPacket
-import com.google.gson.JsonObject
-import com.google.gson.JsonSyntaxException
+import cn.disy920.chatbridge.network.packets.s2c.S2CPacket
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.serializer
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.net.ConnectException
 import java.net.URI
 
@@ -22,6 +27,7 @@ class WebsocketConnection(
      * 该值不代表连接已成功建立，若要判断连接是否成功建立，请使用isOpen方法
      */
     var living = false
+    val logger: Logger = LoggerFactory.getLogger(WebsocketConnection::class.java)
 
     private var reconnecting = false
     private var lastConnectTime = 0L
@@ -54,38 +60,25 @@ class WebsocketConnection(
         main.logger.info(String.format("成功连接至跨服聊天服务器：ws://%s:%s", socketAddress.hostString, socketAddress.port))
     }
 
+    @OptIn(InternalSerializationApi::class)
     override fun onMessage(message: String) {
-        val receiveObj: JsonObject
-
-        try {
-            receiveObj = Packet.GSON.fromJson(message, JsonObject::class.java)
+        val packetJsonObj = try {
+            Packet.CODEC.parseToJsonElement(message).jsonObject
         }
-        catch (e: JsonSyntaxException) {
-            main.logger.error("解析服务端包时发现异常的JSON格式: ", e)
+        catch (e: Exception) {
+            logger.error("接收到非法数据包: $message")
+            logger.error("以下是解析时的错误堆栈信息: ", e)
             return
         }
 
-        val header = receiveObj.get("type").asString
-        try {
-            when (header) {
-                "chatBridge" -> {
-                    val chat = receiveObj.getAsJsonObject("args")
-
-                    val identity = chat["identity"].asString
-                    val sender = chat["sender"].asString
-                    val text = chat["text"].asString
-
-                    val chatText = String.format("<%s§r | %s§r> %s", identity, sender, text)
-
-                    main.serverHandler.broadcast(chatText)
-                }
-            }
-        }
-        catch (e: Exception) {
-            main.logger.error("解析${header}包时发生异常: ", e)
-            e.printStackTrace()
+        val packetType = packetJsonObj["type"]?.jsonPrimitive?.content ?: return
+        val packetClass = S2CPacket.getPacketClass(packetType) ?: let {
+            logger.warn("接收到无法处理的包类型: $packetType, 跳过处理...")
+            return
         }
 
+        val packet = Packet.CODEC.decodeFromJsonElement(packetClass.serializer(), packetJsonObj)
+        packet.onReceive()
     }
 
     override fun onClose(code: Int, reason: String, remote: Boolean) {

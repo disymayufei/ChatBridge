@@ -1,5 +1,4 @@
 name: ChatBridge-Bukkit
-version: '${project.version}'
 main: cn.disy920.chatbridge.bukkit.BukkitServerMain
 api-version: 1.16
 authors: ["Disy920"]
