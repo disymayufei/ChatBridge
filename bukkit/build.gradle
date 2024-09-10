@@ -5,6 +5,13 @@ plugins {
 
 apply plugin: 'com.gradleup.shadow'
 
+version = rootProject.version
+group = rootProject.group
+
+base {
+    archivesName = rootProject.archives_base_name
+}
+
 processResources {
     filesMatching('plugin.yml') {
         expand 'version': project.version
@@ -21,6 +28,9 @@ repositories {
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT"
+
+    shadow "org.java-websocket:Java-WebSocket:1.5.6"
+    shadow project(":common")
 }
 
 def targetJavaVersion = 8
@@ -35,4 +45,22 @@ java {
 
 kotlin {
     jvmToolchain(targetJavaVersion)
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    exclude "kotlin/**", "kotlinx/**", "META-INF"
+    exclude "org/slf4j/**"
+    relocate "org.java_websocket", "cn.disy920.websocket"
+
+    destinationDirectory = file("${rootProject.projectDir}/build/libs")
+    archiveFileName = "${rootProject.archives_base_name}-${project.version}-${project.name}.jar"
+}
+
+build {
+    dependsOn(shadowJar)
 }

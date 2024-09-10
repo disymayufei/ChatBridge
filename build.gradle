@@ -9,51 +9,8 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
-base {
-    archivesName = project.archives_base_name
-}
-
-def modVersion = project.mod_version
-def modArchivesName = project.archives_base_name
-
-allprojects {
-    repositories {
-        mavenCentral()
-    }
-
-    beforeEvaluate {
-        project.setVersion(modVersion)
-    }
-
-    afterEvaluate {
-        if (project.name != "common") {
-            dependencies {
-                implementation(project(":common"))
-            }
-        }
-
-        base {
-            archivesName = modArchivesName
-        }
-
-        shadowJar {
-            configurations = [project.configurations.shadow]
-
-            mergeServiceFiles()
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-            exclude "kotlin/**", "kotlinx/**", "META-INF"
-            exclude "org/slf4j/**"
-            relocate "org.java_websocket", "cn.disy920.websocket"
-
-            destinationDirectory = file("${rootProject.projectDir}/build/libs")
-            archiveFileName = "${modArchivesName}-${project.version}-${project.name}.jar"
-        }
-
-        jar {
-            dependsOn(shadowJar)
-        }
-    }
+repositories {
+    mavenCentral()
 }
 
 java {

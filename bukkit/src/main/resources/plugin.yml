@@ -1,5 +1,6 @@
 name: ChatBridge-Bukkit
 main: cn.disy920.chatbridge.bukkit.BukkitServerMain
 api-version: 1.16
+version: 2.1.1
 authors: ["Disy920"]
 depend: [Kotlin-Stdlib]
