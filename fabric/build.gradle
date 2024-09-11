@@ -46,24 +46,6 @@ dependencies {
     shadow project(":common")
 }
 
-shadowJar {
-    configurations = [project.configurations.shadow]
-
-    mergeServiceFiles()
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    exclude "kotlin/**", "kotlinx/**", "META-INF"
-    exclude "org/slf4j/**"
-    relocate "org.java_websocket", "cn.disy920.websocket"
-
-    destinationDirectory = file("${rootProject.projectDir}/build/libs")
-    archiveFileName = "${rootProject.archives_base_name}-${project.version}-${project.name}.jar"
-}
-
-remapJar {
-    dependsOn(shadowJar)
-}
-
 def targetJavaVersion = 21
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
@@ -76,4 +58,22 @@ java {
 
 kotlin {
     jvmToolchain(targetJavaVersion)
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    exclude "kotlin/**", "kotlinx/**", "META-INF"
+    exclude "org/slf4j/**"
+    relocate "org.java_websocket", "cn.disy920.websocket"
+}
+
+remapJar {
+    dependsOn(shadowJar)
+    inputFile.set(shadowJar.archiveFile)
+    destinationDirectory = file("${rootProject.projectDir}/build/libs")
+    archiveFileName = "${rootProject.archives_base_name}-${project.version}-${project.name}.jar"
 }
