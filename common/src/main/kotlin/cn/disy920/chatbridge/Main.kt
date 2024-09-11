@@ -24,6 +24,7 @@ class Main(
 
     fun onLoad() {
         serverHandler.websocketHandler.connect()
+        println("hi")
     }
 
     fun onEnable() {

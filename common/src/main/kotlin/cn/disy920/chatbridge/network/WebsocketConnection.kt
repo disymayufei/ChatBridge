@@ -98,7 +98,7 @@ class WebsocketConnection(
 
     override fun connect() {
         living = true
-        super.reconnect()
+        super.connect()
     }
 
     fun disconnect() {

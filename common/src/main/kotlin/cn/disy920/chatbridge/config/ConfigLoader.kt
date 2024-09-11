@@ -12,6 +12,8 @@ class ConfigLoader(private val rootDir: File) {
         private val Json: Json = Json {
             ignoreUnknownKeys = true
             isLenient = true
+            encodeDefaults = true
+            prettyPrint = true
         }
     }
 
