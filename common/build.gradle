@@ -20,6 +20,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compileOnly "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1"
     compileOnly "org.jetbrains.kotlin:kotlin-reflect"
+    compileOnly "com.google.code.gson:gson:2.11.0"
 
     shadow "org.java-websocket:Java-WebSocket:1.5.6"
 }

@@ -2,7 +2,9 @@ package cn.disy920.chatbridge.fabric
 
 import cn.disy920.chatbridge.Main
 import cn.disy920.chatbridge.config.ConfigLoader
+import cn.disy920.chatbridge.fabric.warpper.FabricLogger
 import cn.disy920.chatbridge.listener.Listeners
+import com.mojang.logging.LogUtils
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents
@@ -25,6 +27,7 @@ class FabricServerMain : DedicatedServerModInitializer {
 
             modInstance = Main(
                 configLoader,
+                FabricLogger(LogUtils.getLogger()),
                 FabricServerHandler(
                     server,
                     config.serverName,

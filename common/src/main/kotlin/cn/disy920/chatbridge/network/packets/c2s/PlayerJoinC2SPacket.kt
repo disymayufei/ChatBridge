@@ -1,7 +1,5 @@
 package cn.disy920.chatbridge.network.packets.c2s
 
-import cn.disy920.chatbridge.network.packets.Packet
-
 data class PlayerJoinC2SPacket(
     val serverName: String,
     val playerName: String

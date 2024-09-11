@@ -1,6 +1,7 @@
 package cn.disy920.chatbridge.network
 
 import cn.disy920.chatbridge.Main.Companion.main
+import cn.disy920.chatbridge.intermediate.Logger
 import cn.disy920.chatbridge.network.packets.Packet
 import cn.disy920.chatbridge.network.packets.c2s.PingC2SPacket
 import cn.disy920.chatbridge.network.packets.s2c.S2CPacket
@@ -11,8 +12,6 @@ import kotlinx.serialization.serializer
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.drafts.Draft_6455
 import org.java_websocket.handshake.ServerHandshake
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.net.ConnectException
 import java.net.URI
 
@@ -27,7 +26,7 @@ class WebsocketConnection(
      * 该值不代表连接已成功建立，若要判断连接是否成功建立，请使用isOpen方法
      */
     var living = false
-    val logger: Logger = LoggerFactory.getLogger(WebsocketConnection::class.java)
+    val logger: Logger = main.logger
 
     private var reconnecting = false
     private var lastConnectTime = 0L

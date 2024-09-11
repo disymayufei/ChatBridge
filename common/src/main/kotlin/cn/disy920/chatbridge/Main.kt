@@ -2,12 +2,12 @@ package cn.disy920.chatbridge
 
 import cn.disy920.chatbridge.config.Config
 import cn.disy920.chatbridge.config.ConfigLoader
+import cn.disy920.chatbridge.intermediate.Logger
 import cn.disy920.chatbridge.network.packets.c2s.ChatC2SPacket
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 class Main(
     private val configLoader: ConfigLoader,
+    val logger: Logger,
     val serverHandler: ServerHandler
 ) {
 
@@ -19,7 +19,6 @@ class Main(
         main = this
     }
 
-    val logger: Logger = LoggerFactory.getLogger(Main::class.java)
     val config: Config
         get() = configLoader.loadConfig()
 

@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Config(
+    val debug: Boolean = false,
     val serverName: String = "unknown-server",
     val retryInterval: Long = 3000L,
     val host: String = "localhost",
