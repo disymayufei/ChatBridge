@@ -55,7 +55,6 @@ shadowJar {
 
     exclude "kotlin/**", "kotlinx/**", "META-INF"
     exclude "org/slf4j/**"
-    relocate "org.java_websocket", "cn.disy920.websocket"
 
     destinationDirectory = file("${rootProject.projectDir}/build/libs")
     archiveFileName = "${rootProject.archives_base_name}-${project.version}-${project.name}.jar"

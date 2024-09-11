@@ -28,6 +28,8 @@ abstract class S2CPacket<T : Any>(
 
                 packetCache[type] = subClass
             }
+
+            println(packetCache)
         }
 
         @JvmStatic
