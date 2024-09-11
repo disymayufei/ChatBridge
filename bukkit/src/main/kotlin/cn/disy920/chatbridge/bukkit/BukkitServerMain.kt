@@ -11,7 +11,7 @@ import java.net.URI
 class BukkitServerMain : JavaPlugin() {
     private lateinit var pluginInstance: Main
 
-    override fun onEnable() {
+    override fun onLoad() {
         val configLoader = ConfigLoader(this.dataFolder)
         val config = configLoader.loadConfig()
 
@@ -25,8 +25,11 @@ class BukkitServerMain : JavaPlugin() {
             )
         )
 
-        pluginInstance.onEnable()
+        pluginInstance.onLoad()
+    }
 
+    override fun onEnable() {
+        pluginInstance.onEnable()
         Bukkit.getPluginManager().registerEvents(PlayerListener(), this)
     }
 

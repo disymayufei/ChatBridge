@@ -22,6 +22,9 @@ class Main(
     val config: Config
         get() = configLoader.loadConfig()
 
+    fun onLoad() {
+        serverHandler.websocketHandler.connect()
+    }
 
     fun onEnable() {
         val messageConfig = config.messageConfig

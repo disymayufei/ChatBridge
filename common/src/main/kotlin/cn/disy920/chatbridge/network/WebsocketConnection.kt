@@ -26,7 +26,9 @@ class WebsocketConnection(
      * 该值不代表连接已成功建立，若要判断连接是否成功建立，请使用isOpen方法
      */
     var living = false
-    val logger: Logger = main.logger
+
+    private val logger: Logger
+        get() = main.logger
 
     private var reconnecting = false
     private var lastConnectTime = 0L
@@ -56,7 +58,7 @@ class WebsocketConnection(
         reconnecting = false
 
         val socketAddress = this.remoteSocketAddress
-        main.logger.info(String.format("成功连接至跨服聊天服务器：ws://%s:%s", socketAddress.hostString, socketAddress.port))
+        logger.info(String.format("成功连接至跨服聊天服务器：ws://%s:%s", socketAddress.hostString, socketAddress.port))
     }
 
     @OptIn(InternalSerializationApi::class)
@@ -87,16 +89,16 @@ class WebsocketConnection(
     override fun onError(ex: Exception) {
         if (ex is ConnectException) {
             // 这就是单纯的与服务器断开连接，实际上应该忽略掉，等待自动重连就行，避免log刷屏
-            main.logger.info("与跨服聊天的服务器连接断开，正在尝试自动重连...")
+            logger.info("与跨服聊天的服务器连接断开，正在尝试自动重连...")
             return
         }
 
-        main.logger.error("与跨服聊天的服务器连接发生错误: ", ex)
+        logger.error("与跨服聊天的服务器连接发生错误: ", ex)
     }
 
     override fun connect() {
         living = true
-        super.connect()
+        super.reconnect()
     }
 
     fun disconnect() {

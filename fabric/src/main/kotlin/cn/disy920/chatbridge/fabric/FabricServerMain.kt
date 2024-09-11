@@ -21,21 +21,23 @@ class FabricServerMain : DedicatedServerModInitializer {
         const val MOD_ID = "cn.disy920.chatbridge"
     }
     override fun onInitializeServer() {
-        ServerLifecycleEvents.SERVER_STARTING.register { server ->
-            val configLoader = ConfigLoader(FabricLoader.getInstance().configDir.toFile())
-            val config = configLoader.loadConfig()
+        val configLoader = ConfigLoader(FabricLoader.getInstance().configDir.toFile())
+        val config = configLoader.loadConfig()
 
-            modInstance = Main(
-                configLoader,
-                FabricLogger(LogUtils.getLogger()),
-                FabricServerHandler(
-                    server,
-                    config.serverName,
-                    URI("ws://${config.host}:${config.port}"),
-                    config.retryInterval
-                )
+        modInstance = Main(
+            configLoader,
+            FabricLogger(LogUtils.getLogger()),
+            FabricServerHandler(
+                server,
+                config.serverName,
+                URI("ws://${config.host}:${config.port}"),
+                config.retryInterval
             )
+        )
 
+        modInstance.onLoad()
+
+        ServerLifecycleEvents.SERVER_STARTING.register { server ->
             FabricServerMain.server = server
             modInstance.onEnable()
         }

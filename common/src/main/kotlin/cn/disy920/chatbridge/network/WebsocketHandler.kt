@@ -9,7 +9,7 @@ class WebsocketHandler(
 ) {
     private val websocketConnection: WebsocketConnection = WebsocketConnection(serverAddress, retryInterval)
 
-    init {
+    fun connect() {
         if (!websocketConnection.living) websocketConnection.connect()
     }
 
